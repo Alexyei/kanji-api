@@ -40,13 +40,21 @@ class WordController extends Controller
 
         $hiragana = 'あいうええかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわゐゑをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ';
         $katakana = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポ';
-        $chars='野兎';
-        $words = WordResource::collection(Word::with('tags')->whereHas('tags', function($q){
-            $q->where('name', '=', 'n1');
-        })->where('word', 'regexp', '^['.$chars.$hiragana.$katakana.']+$')
-            ->whereRaw('CHAR_LENGTH(word) < ?', [5])->inRandomOrder()->limit(10)
+        $chars='嫌';
+        $words = WordResource::collection(Word::
+        with('tags')->whereHas('tags', function($q){
+            $q->where('name', '=', 'N5');
+        })
+            ->where('type','=','kanji')
+            ->where('word', 'regexp', '^['.$chars.$hiragana.$katakana.']+$')
+            ->whereRaw('CHAR_LENGTH(word) < ?', [10])
+            //->inRandomOrder()->limit(10)
             ->orderBy('id','desc')->get());
 
-        return $words;
+
+        $arr = [];
+            foreach($words as $word)
+                $arr[] = $word->word;
+        return array_unique($arr);
     }
 }

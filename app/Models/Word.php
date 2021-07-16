@@ -23,6 +23,7 @@ class Word extends Model
         'word',
         'translate',
         'lang',
+        'type'
     ];
 
     /**
