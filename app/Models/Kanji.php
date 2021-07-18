@@ -10,17 +10,20 @@ use Illuminate\Notifications\Notifiable;
 /**
  * @mixin Builder
  */
-class Tag extends Model
+class Kanji extends Model
 {
     use HasFactory, Notifiable;
 
+    protected $table = 'kanji';
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name',
+        'word',
+        'translate',
+        'lang',
     ];
 
     /**
@@ -39,11 +42,9 @@ class Tag extends Model
     protected $casts = [
     ];
 
-    public function words(){
-        return $this->belongsToMany(Word::class,'word_tag');
-    }
+    protected $guarded = [];
 
-    public function kanji(){
-        return $this->belongsToMany(Kanji::class,'kanji_tag');
+    function tags(){
+        return $this->belongsToMany(Tag::class,'kanji_tag');
     }
 }

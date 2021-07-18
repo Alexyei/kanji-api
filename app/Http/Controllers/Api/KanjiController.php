@@ -9,13 +9,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class WordController extends Controller
+class KanjiController extends Controller
 {
     public function index(Request $request){
         $rules=[
             'chars' => 'required|string|between:1,2000',
             'lang' => 'required|in:ja,zh-hant,zh-hans',
-            'type' => 'required|in:kanji,katakana,hiragana',
+//            'type' => 'required|in:kanji,katakana,hiragana',
             'minLength' => 'required|numeric|between:1,10',
             'maxLength' => 'required|numeric|gte:minLength',
             'count' => 'required|numeric|between:1,100',
@@ -60,24 +60,31 @@ class WordController extends Controller
         $chars=$request->chars;
         if ($request->type == 'kanji')
             $chars .= $hiragana.$katakana;
-        $words = WordResource::collection(Word::
-        with('tags')
-//            ->whereHas('tags', function($q){
-//            $q->where('name', '=', 'N5');
-//        })
-            ->where('type','=',$request->type)
-            ->where('word', 'regexp', '^['.$chars.']+$')
-            ->whereRaw('CHAR_LENGTH(word) < ?', [$request->maxLength])
-            ->whereRaw('CHAR_LENGTH(word) >= ?', [$request->minLength])
-            ->inRandomOrder()->limit($request->count)
-            //->orderBy('id','desc')
-            ->get());
+        $sections = ['N5','N4','N3','N2'];
+        $words = [];
+        foreach ($sections as $tagname){
+            $words[] = WordResource::collection(Word::
+
+            with('tags')
+                ->whereHas('tags', function($q) use ($tagname){
+                    $q->where('name', '=', $tagname);
+                })
+//                ->groupBy(tags)
+
+                ->where('type','=',$request->type)
+                ->where('word', 'regexp', '^['.$chars.']+$')
+                ->whereRaw('CHAR_LENGTH(word) < ?', [$request->maxLength])
+                ->whereRaw('CHAR_LENGTH(word) >= ?', [$request->minLength])
+                ->inRandomOrder()->limit($request->count)
+                //->orderBy('id','desc')
+                ->get());
 
 //        $arr = [];
 //            foreach($words as $word)
 //                $arr[] = $word->word;
 //        return array_unique($arr);
+
+        }
         return $words;
     }
-
 }

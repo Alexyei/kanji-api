@@ -19,3 +19,4 @@ use Illuminate\Support\Facades\Route;
 //});
 
 Route::post('words',[\App\Http\Controllers\Api\WordController::class,'index']);
+Route::post('kanji',[\App\Http\Controllers\Api\KanjiController::class,'index']);
