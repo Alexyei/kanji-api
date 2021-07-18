@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\KanjiResource;
 use App\Http\Resources\WordResource;
+use App\Models\Kanji;
 use App\Models\Word;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,12 +15,12 @@ class KanjiController extends Controller
 {
     public function index(Request $request){
         $rules=[
-            'chars' => 'required|string|between:1,2000',
+//            'chars' => 'required|string|between:1,2000',
             'lang' => 'required|in:ja,zh-hant,zh-hans',
 //            'type' => 'required|in:kanji,katakana,hiragana',
-            'minLength' => 'required|numeric|between:1,10',
-            'maxLength' => 'required|numeric|gte:minLength',
-            'count' => 'required|numeric|between:1,100',
+//            'minLength' => 'required|numeric|between:1,10',
+//            'maxLength' => 'required|numeric|gte:minLength',
+//            'count' => 'required|numeric|between:1,100',
         ];
         $messages=[
             'required' => 'Please enter a :attribute.',
@@ -55,15 +57,15 @@ class KanjiController extends Controller
 //            ->orderBy('id','desc')->get());
 
 
-        $hiragana = 'あいうええかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわゐゑをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ';
-        $katakana = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポ';
-        $chars=$request->chars;
-        if ($request->type == 'kanji')
-            $chars .= $hiragana.$katakana;
+//        $hiragana = 'あいうええかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわゐゑをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ';
+//        $katakana = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポ';
+//        $chars=$request->chars;
+    //    if ($request->type == 'kanji')
+    //        $chars .= $hiragana.$katakana;
         $sections = ['N5','N4','N3','N2'];
-        $words = [];
+        $kanji = [];
         foreach ($sections as $tagname){
-            $words[] = WordResource::collection(Word::
+            $kanji[] = KanjiResource::collection(Kanji::
 
             with('tags')
                 ->whereHas('tags', function($q) use ($tagname){
@@ -71,11 +73,11 @@ class KanjiController extends Controller
                 })
 //                ->groupBy(tags)
 
-                ->where('type','=',$request->type)
-                ->where('word', 'regexp', '^['.$chars.']+$')
-                ->whereRaw('CHAR_LENGTH(word) < ?', [$request->maxLength])
-                ->whereRaw('CHAR_LENGTH(word) >= ?', [$request->minLength])
-                ->inRandomOrder()->limit($request->count)
+          //      ->where('type','=',$request->type)
+           //     ->where('word', 'regexp', '^['.$chars.']+$')
+          //      ->whereRaw('CHAR_LENGTH(word) < ?', [$request->maxLength])
+           //     ->whereRaw('CHAR_LENGTH(word) >= ?', [$request->minLength])
+          //      ->inRandomOrder()->limit($request->count)
                 //->orderBy('id','desc')
                 ->get());
 
@@ -85,6 +87,6 @@ class KanjiController extends Controller
 //        return array_unique($arr);
 
         }
-        return $words;
+        return $kanji;
     }
 }
