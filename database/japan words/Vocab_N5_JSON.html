@@ -5326,7 +5326,7 @@ body { margin-left: 0.7in; margin-right: 0.7in; margin-top: 0.75in; margin-botto
           //   tags: ["N5"]
           // })
               //   row.push(table[i].children[j]);
-              if (table[i].children[1].children[0])
+              if (table[i].children[1].children[0]  && !table[i].children[1].children[0].innerHTML.includes("〜"))
                 tableObject.push({
                   word: table[i].children[1].children[0].innerHTML.split("・")[0].trim(),
                   translate : table[i].children[3].children[0].innerHTML,
@@ -5334,7 +5334,7 @@ body { margin-left: 0.7in; margin-right: 0.7in; margin-top: 0.75in; margin-botto
                   lang: "ja",
                   tags: ["N5"]
                 });
-          if (table[i].children[2].children[0])
+          if (table[i].children[2].children[0]  && !table[i].children[2].children[0].innerHTML.includes("〜"))
             tableObject.push({
               word: table[i].children[2].children[0].innerHTML.split("・")[0].trim(),
               translate : table[i].children[3].children[0].innerHTML,
@@ -5356,8 +5356,8 @@ body { margin-left: 0.7in; margin-right: 0.7in; margin-top: 0.75in; margin-botto
     console.log(
         data
     );
-    var fs = require('fs');
-    fs.writeFile("file.json", data);
+    // var fs = require('fs');
+    // fs.writeFile("file.json", data);
 </script>
   </body>
 </html>

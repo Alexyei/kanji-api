@@ -37,22 +37,41 @@ class WordController extends Controller
             return response()->json(['errors'=>$errors], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+//dd($request->all());
+
+//        $hiragana = 'あいうええかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわゐゑをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ';
+//        $katakana = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポ';
+//        $chars='嫌朝御飯あなた';
+//        $words = WordResource::collection(Word::
+//        with('tags')
+////            ->whereHas('tags', function($q){
+////            $q->where('name', '=', 'N5');
+////        })
+//            ->where('type','=','katakana')
+//            ->where('word', 'regexp', '^['.$chars.$hiragana.$katakana.']+$')
+//            ->whereRaw('CHAR_LENGTH(word) <= ?', [10])
+//            ->whereRaw('CHAR_LENGTH(word) >= ?', [1])
+//            ->inRandomOrder()->limit(10)
+//            ->orderBy('id','desc')->get());
+
 
         $hiragana = 'あいうええかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわゐゑをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ';
         $katakana = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポ';
-        $chars='嫌朝御飯あなた';
+        $chars=$request->chars;
+        if ($request->type == 'kanji')
+            $chars .= $hiragana.$katakana;
         $words = WordResource::collection(Word::
         with('tags')
 //            ->whereHas('tags', function($q){
 //            $q->where('name', '=', 'N5');
 //        })
-            ->where('type','=','katakana')
-            ->where('word', 'regexp', '^['.$chars.$hiragana.$katakana.']+$')
-            ->whereRaw('CHAR_LENGTH(word) <= ?', [10])
-            ->whereRaw('CHAR_LENGTH(word) >= ?', [1])
-            ->inRandomOrder()->limit(10)
-            ->orderBy('id','desc')->get());
-
+            ->where('type','=',$request->type)
+            ->where('word', 'regexp', '^['.$chars.']+$')
+            ->whereRaw('CHAR_LENGTH(word) < ?', [$request->maxLength])
+            ->whereRaw('CHAR_LENGTH(word) >= ?', [$request->minLength])
+            ->inRandomOrder()->limit($request->count)
+            //->orderBy('id','desc')
+            ->get());
 
 //        $arr = [];
 //            foreach($words as $word)
