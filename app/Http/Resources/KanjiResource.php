@@ -15,6 +15,7 @@ class KanjiResource extends JsonResource
     public function toArray($request)
     {
         return [
+           // 'req' => $request,
             'id' => $this->id,
             'word' => $this->word,
             'translate' => explode(", ",$this->translate)[0],
